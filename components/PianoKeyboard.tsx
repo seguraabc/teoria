@@ -25,7 +25,7 @@ const PianoKeyboard: React.FC<PianoKeyboardProps> = ({
   };
 
   return (
-    <div className="flex justify-center items-start my-8 select-none overflow-x-auto pb-4">
+    <div className="flex justify-center items-start my-4 sm:my-8 select-none overflow-x-auto pb-4">
       <div className="flex">
         {Array.from({ length: numOctaves }).map((_, octaveIndex) => {
           const currentOctave = startOctave + octaveIndex;

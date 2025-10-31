@@ -124,9 +124,11 @@ const CircleOfFifths: React.FC = () => {
   return (
     <Card className="w-full">
       <h2 className="text-2xl font-bold text-center mb-6 text-sky-400">Círculo de Quintas Interactivo</h2>
-      <div className="flex flex-col lg:flex-row items-center justify-around gap-8">
-        {renderCircle()}
-        <div className="text-center w-full lg:w-auto">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+        <div className="transform scale-[0.85] sm:scale-100 -m-6 sm:m-0 transition-transform duration-300">
+          {renderCircle()}
+        </div>
+        <div className="text-center w-full max-w-lg mx-auto md:max-w-none md:w-auto md:mx-0">
             <div className="flex justify-center mb-4">
                 <div className="flex space-x-1 bg-gray-700 rounded-full p-1">
                     <button onClick={() => handleModeChange('major')} className={`px-4 py-1 text-sm rounded-full transition ${mode === 'major' ? 'bg-sky-500' : ''}`}>Mayor</button>
@@ -136,7 +138,7 @@ const CircleOfFifths: React.FC = () => {
             <h3 className="text-xl font-semibold">Tonalidad: <span className="text-sky-400">{mode === 'major' ? keyInfo.major : keyInfo.minor}</span></h3>
             <p className="text-sm text-gray-400 mb-2">Armadura: {keyInfo.signature}</p>
             <p className="text-gray-400">Notas en la Escala:</p>
-            <div className="flex gap-2 justify-center mt-2 font-mono" onClick={() => {
+            <div className="flex gap-2 justify-center mt-2 font-mono flex-wrap" onClick={() => {
                 setHighlightedNotes(scaleNotes);
                 setHighlightType('scale');
               }}>
