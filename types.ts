@@ -19,3 +19,5 @@ export interface Chord {
 }
 
 export type Mode = 'major' | 'minor';
+
+export type Instrument = 'piano' | 'guitar';

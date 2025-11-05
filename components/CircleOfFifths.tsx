@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import Card from './ui/Card';
 import PianoKeyboard from './PianoKeyboard';
+import GuitarFretboard from './GuitarFretboard';
+import { useInstrument } from '../contexts/InstrumentContext';
 import { 
   CIRCLE_OF_FIFTHS_MAJOR, 
   CIRCLE_OF_FIFTHS_MINOR, 
@@ -20,6 +22,7 @@ const CircleOfFifths: React.FC = () => {
   const [mode, setMode] = useState<Mode>('major');
   const [highlightedNotes, setHighlightedNotes] = useState<string[]>([]);
   const [highlightType, setHighlightType] = useState<'scale' | 'chord'>('scale');
+  const { instrument } = useInstrument();
 
   // Memoized values for performance
   const keyInfo = useMemo(() => KEY_DISPLAY_NAMES[selectedMajorKey], [selectedMajorKey]);
@@ -162,7 +165,18 @@ const CircleOfFifths: React.FC = () => {
             </div>
         </div>
       </div>
-      <PianoKeyboard highlightedNotes={highlightedNotes} highlightClasses={highlightClasses} />
+       {instrument === 'piano' ? (
+        <PianoKeyboard highlightedNotes={highlightedNotes} highlightClasses={highlightClasses} />
+      ) : (
+        <GuitarFretboard
+          highlightedNotes={highlightedNotes}
+          rootNote={highlightType === 'scale' ? activeKey : highlightedNotes[0]?.replace(/[0-9]/g, '') as Note || undefined}
+          noteColors={{
+            root: 'bg-sky-500',
+            other: 'bg-green-500'
+          }}
+        />
+      )}
     </Card>
   );
 };

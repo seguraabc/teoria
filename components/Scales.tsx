@@ -4,10 +4,13 @@ import { NOTES, SCALES, getScaleNotesWithOctaves } from '../constants';
 import Card from './ui/Card';
 import Select from './ui/Select';
 import PianoKeyboard from './PianoKeyboard';
+import GuitarFretboard from './GuitarFretboard';
+import { useInstrument } from '../contexts/InstrumentContext';
 
 const Scales: React.FC = () => {
   const [rootNote, setRootNote] = useState<Note>('C');
   const [scaleKey, setScaleKey] = useState<string>('major');
+  const { instrument } = useInstrument();
 
   const selectedScale = SCALES[scaleKey];
 
@@ -47,7 +50,11 @@ const Scales: React.FC = () => {
           ))}
         </div>
       </div>
-      <PianoKeyboard highlightedNotes={scaleNotes.slice(0, -1)} />
+       {instrument === 'piano' ? (
+          <PianoKeyboard highlightedNotes={scaleNotes.slice(0, -1)} />
+        ) : (
+          <GuitarFretboard highlightedNotes={scaleNotes.slice(0, -1)} rootNote={rootNote} />
+        )}
     </Card>
   );
 };

@@ -1,14 +1,17 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Note } from '../types';
-import { NOTES, CHORDS, getChordNotesWithOctaves } from '../constants';
+import { NOTES, CHORDS, getChordNotesWithOctaves, getGuitarVoicings } from '../constants';
 import Card from './ui/Card';
 import Select from './ui/Select';
 import PianoKeyboard from './PianoKeyboard';
+import GuitarFretboard from './GuitarFretboard';
+import { useInstrument } from '../contexts/InstrumentContext';
 
 const Chords: React.FC = () => {
   const [rootNote, setRootNote] = useState<Note>('C');
   const [chordKey, setChordKey] = useState<string>('major');
   const [inversion, setInversion] = useState<number>(0);
+  const { instrument } = useInstrument();
 
   const selectedChord = CHORDS[chordKey];
 
@@ -18,12 +21,26 @@ const Chords: React.FC = () => {
     }
     return [];
   }, [rootNote, selectedChord]);
+
+  const guitarVoicings = useMemo(() => {
+      if (instrument === 'guitar' && rootNote && selectedChord) {
+          return getGuitarVoicings(rootNote, selectedChord);
+      }
+      return [];
+  }, [instrument, rootNote, selectedChord]);
   
+  const currentGuitarVoicing = guitarVoicings[inversion] || undefined;
+
   useEffect(() => {
-    if (inversion >= chordNotes.length) {
+    setInversion(0);
+  }, [instrument, rootNote, chordKey]);
+
+  useEffect(() => {
+    const maxPositions = instrument === 'piano' ? chordNotes.length : guitarVoicings.length;
+    if (inversion >= maxPositions) {
       setInversion(0);
     }
-  }, [chordNotes, inversion]);
+  }, [chordNotes.length, guitarVoicings.length, inversion, instrument]);
 
   const applyInversion = (notes: string[], inv: number): string[] => {
     if (inv === 0 || notes.length === 0) {
@@ -57,6 +74,12 @@ const Chords: React.FC = () => {
     setChordKey(e.target.value);
     setInversion(0);
   };
+  
+  const displayedNotes = instrument === 'guitar' 
+    ? (currentGuitarVoicing?.map(v => v.note) ?? [])
+    : invertedChordNotes;
+    
+  const positionOptionsCount = instrument === 'guitar' ? guitarVoicings.length : chordNotes.length;
 
   return (
     <Card className="w-full">
@@ -79,14 +102,17 @@ const Chords: React.FC = () => {
           ))}
         </Select>
         <Select
-          label="Inversión"
+          label={instrument === 'guitar' ? 'Posición' : 'Inversión'}
           value={inversion}
           onChange={(e) => setInversion(parseInt(e.target.value, 10))}
-          disabled={chordNotes.length < 2}
+          disabled={positionOptionsCount < 2}
         >
-          {chordNotes.map((_, index) => (
+          {Array.from({ length: positionOptionsCount }).map((_, index) => (
             <option key={index} value={index}>
-              {index === 0 ? 'Posición Fundamental' : `${index}ª Inversión`}
+              {instrument === 'guitar'
+                ? `Posición ${index + 1}`
+                : index === 0 ? 'Posición Fundamental' : `${index}ª Inversión`
+              }
             </option>
           ))}
         </Select>
@@ -94,12 +120,20 @@ const Chords: React.FC = () => {
        <div className="mt-8 text-center">
         <h3 className="text-xl font-semibold">{rootNote} {selectedChord.name}</h3>
         <div className="flex gap-2 justify-center mt-2 font-mono flex-wrap">
-          {invertedChordNotes.map((note, index) => (
-            <span key={`${note}-${index}`} className="bg-gray-700 px-3 py-1 rounded-md text-lg">{note.replace(/[0-9]/, '')}</span>
+          {/* Display unique notes for clarity in text */}
+          {[...new Set(displayedNotes.map(n => n.replace(/[0-9]/, '')))].map((note, index) => (
+            <span key={`${note}-${index}`} className="bg-gray-700 px-3 py-1 rounded-md text-lg">{note}</span>
           ))}
         </div>
       </div>
-      <PianoKeyboard highlightedNotes={invertedChordNotes} />
+       {instrument === 'piano' ? (
+          <PianoKeyboard highlightedNotes={invertedChordNotes} />
+        ) : (
+          <GuitarFretboard 
+              voicing={currentGuitarVoicing} 
+              rootNote={rootNote}
+          />
+        )}
     </Card>
   );
 };
