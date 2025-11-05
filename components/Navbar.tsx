@@ -22,7 +22,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, setCurrentView }) => {
           <span className="hidden sm:inline">Visualizador de Teoría Musical</span>
           <span className="sm:hidden">Teoría Musical</span>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap justify-center items-center gap-4">
           <InstrumentSwitch instrument={instrument} setInstrument={setInstrument} />
           <div className="flex items-center space-x-2 bg-gray-700 rounded-full p-1">
             {views.map(view => (
