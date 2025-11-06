@@ -76,7 +76,7 @@ const GuitarFretboard: React.FC<GuitarFretboardProps> = ({
     const barreElement = renderBarre();
 
     return (
-        <div className="flex justify-center items-center my-4 sm:my-8 overflow-x-auto p-4 select-none">
+        <div className="flex justify-start lg:justify-center items-center my-4 sm:my-8 overflow-x-auto p-4 select-none">
             <div className="bg-gray-800 p-4 rounded-lg shadow-inner flex flex-col">
                 <div className="flex flex-col-reverse relative">
                      {barreElement}
