@@ -10,23 +10,30 @@ import { useInstrument } from '../contexts/InstrumentContext';
 
 // --- Motor de Audio Profesional con Tone.js ---
 
-const ALL_NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 const OCTAVES_TO_LOAD = [3, 4];
 
-// Mapa para convertir sostenidos a bemoles, que es el formato de la nueva fuente de audio.
-const enharmonicMap: { [key: string]: string } = {
-  'C#': 'Db',
-  'D#': 'Eb',
-  'F#': 'Gb',
-  'G#': 'Ab',
-  'A#': 'Bb',
+// Mapa completo para convertir todas las notas al formato de nombre de archivo del soundfont (p. ej., 'C#' -> 'Csharp').
+// Esto es más robusto y evita la lógica condicional.
+const noteToFilenameMap: { [key in Note]: string } = {
+  'C': 'C',
+  'C#': 'Csharp',
+  'D': 'D',
+  'D#': 'Dsharp',
+  'E': 'E',
+  'F': 'F',
+  'F#': 'Fsharp',
+  'G': 'G',
+  'G#': 'Gsharp',
+  'A': 'A',
+  'A#': 'Asharp',
+  'B': 'B',
 };
 
+
 const urls = OCTAVES_TO_LOAD.reduce((acc, octave) => {
-  ALL_NOTES.forEach(note => {
+  NOTES.forEach(note => {
     const noteName = `${note}${octave}`;
-    const fileNameRoot = enharmonicMap[note as keyof typeof enharmonicMap] || note;
-    // La nueva fuente usa archivos .mp3 y una convención de bemoles para los sostenidos.
+    const fileNameRoot = noteToFilenameMap[note];
     const fileName = `${fileNameRoot}${octave}.mp3`;
     acc[noteName] = fileName;
   });
@@ -66,6 +73,26 @@ const Harmony: React.FC = () => {
   const reverb = useRef<Tone.Reverb | null>(null);
   const sequenceRef = useRef<Tone.Sequence | null>(null);
 
+  const stopProgression = useCallback(() => {
+     if (sequenceRef.current) {
+      sequenceRef.current.stop();
+      sequenceRef.current.dispose();
+      sequenceRef.current = null;
+    }
+    if (Tone.Transport.state !== 'stopped') {
+        Tone.Transport.stop();
+        Tone.Transport.cancel();
+    }
+
+    Tone.Transport.bpm.value = 120;
+
+    setIsPlaying(false);
+    setCurrentProgressionIndex(null);
+    setCurrentChordIndex(null);
+    setHighlightedNotes([]);
+    setHighlightedRoot(undefined);
+  }, []);
+
   useEffect(() => {
     setIsLoaded(false);
     if (isPlaying) {
@@ -81,7 +108,7 @@ const Harmony: React.FC = () => {
     sampler.current = new Tone.Sampler({
       urls,
       release: 1, // Añade una "cola" de 1 segundo a cada nota para evitar cortes abruptos.
-      baseUrl: `https://cdn.jsdelivr.net/gh/gleitz/midi-js-soundfonts@master/FluidR3_GM/${soundfont}/`,
+      baseUrl: `https://unpkg.com/midi-js-soundfonts@1.2.2/FluidR3_GM/${soundfont}/`,
       onload: () => setIsLoaded(true)
     }).connect(reverb.current);
 
@@ -89,8 +116,9 @@ const Harmony: React.FC = () => {
     return () => {
       sampler.current?.dispose();
       reverb.current?.dispose();
+      stopProgression();
     }
-  }, [instrument]);
+  }, [instrument, stopProgression]);
   
   const transposeProgression = useCallback((progression: string[], key: Note): TransposedChord[] => {
     const scaleNotesWithOctaves = getScaleNotesWithOctaves(key, SCALES.major, 3);
@@ -113,26 +141,6 @@ const Harmony: React.FC = () => {
 
       return { name: chordDisplayName, notes: chordNotes, rootNote: rootNoteName };
     });
-  }, []);
-
-  const stopProgression = useCallback(() => {
-     if (sequenceRef.current) {
-      sequenceRef.current.stop();
-      sequenceRef.current.dispose();
-      sequenceRef.current = null;
-    }
-    if (Tone.Transport.state !== 'stopped') {
-        Tone.Transport.stop();
-        Tone.Transport.cancel();
-    }
-
-    Tone.Transport.bpm.value = 120;
-
-    setIsPlaying(false);
-    setCurrentProgressionIndex(null);
-    setCurrentChordIndex(null);
-    setHighlightedNotes([]);
-    setHighlightedRoot(undefined);
   }, []);
 
   const playProgression = useCallback(async (progression: TransposedChord[], progIndex: number) => {
