@@ -36,6 +36,15 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, setCurrentView }) => {
               </button>
             ))}
             <a
+              href="https://ocr-partituras.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 sm:px-4 py-2 text-sm font-medium rounded-full transition-colors duration-300 text-gray-300 hover:bg-gray-600"
+              title="OCR Partituras (enlace externo)"
+            >
+              OCR
+            </a>
+            <a
               href="https://mis-acordes.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
