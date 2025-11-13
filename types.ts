@@ -6,6 +6,7 @@ export enum View {
   Scales = 'Escalas',
   Chords = 'Acordes',
   Harmony = 'Armonía',
+  Voicing = 'Voice leading',
 }
 
 export interface Scale {

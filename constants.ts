@@ -43,6 +43,9 @@ export const CHORDS: { [key: string]: Chord } = {
   diminished7: { name: 'Disminuido 7ª', intervals: [0, 3, 6, 9] },
   halfDiminished7: { name: 'Semidisminuido 7ª', intervals: [0, 3, 6, 10] },
   minorMajor7: { name: 'Menor-Mayor 7ª', intervals: [0, 3, 7, 11] },
+  major9: { name: 'Mayor 9ª', intervals: [0, 4, 7, 11, 14] },
+  minor9: { name: 'Menor 9ª', intervals: [0, 3, 7, 10, 14] },
+  dominant9: { name: 'Dominante 9ª', intervals: [0, 4, 7, 10, 14] },
 };
 
 export const CIRCLE_OF_FIFTHS_MAJOR: Note[] = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#', 'F'];

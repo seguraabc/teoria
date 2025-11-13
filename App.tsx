@@ -5,10 +5,11 @@ import CircleOfFifths from './components/CircleOfFifths';
 import Scales from './components/Scales';
 import Chords from './components/Chords';
 import Harmony from './components/Harmony';
+import Voicing from './components/Voicing';
 import { InstrumentProvider } from './contexts/InstrumentContext';
 
 const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<View>(View.Chords);
+  const [currentView, setCurrentView] = useState<View>(View.Voicing);
 
   const renderView = () => {
     switch (currentView) {
@@ -20,8 +21,10 @@ const App: React.FC = () => {
         return <Chords />;
       case View.Harmony:
         return <Harmony />;
+      case View.Voicing:
+        return <Voicing />;
       default:
-        return <CircleOfFifths />;
+        return <Voicing />;
     }
   };
 
