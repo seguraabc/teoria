@@ -9,7 +9,7 @@ import Voicing from './components/Voicing';
 import { InstrumentProvider } from './contexts/InstrumentContext';
 
 const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<View>(View.Voicing);
+  const [currentView, setCurrentView] = useState<View>(View.CircleOfFifths);
 
   const renderView = () => {
     switch (currentView) {
@@ -24,7 +24,7 @@ const App: React.FC = () => {
       case View.Voicing:
         return <Voicing />;
       default:
-        return <Voicing />;
+        return <CircleOfFifths />;
     }
   };
 

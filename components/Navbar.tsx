@@ -24,7 +24,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, setCurrentView }) => {
         </div>
         <div className="flex flex-wrap justify-center items-center gap-4">
           <InstrumentSwitch instrument={instrument} setInstrument={setInstrument} />
-          <div className="flex items-center space-x-2 bg-gray-700 rounded-full p-1">
+          <div className="flex flex-wrap justify-center items-center gap-1 bg-gray-700 rounded-lg p-1">
             {views.map(view => (
               <button
                 key={view}
